@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class FlyEnemy : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float triggerPosX = -6f;
 
     GameObject tongue;
 
@@ -12,17 +14,19 @@ public class FlyEnemy : MonoBehaviour
 
     EnemySpawner enemySpawner;
 
-    ScoreManager scoreManager;
+    ScoreKeeper scoreKeeper;
 
     Vector3 positionDifference;
     bool gotHit = false;
     bool posDiffAssigned = false;
 
+    bool posReported = false;
+
     void Start()
     {
         tongueController = FindObjectOfType<TongueController>();
         enemySpawner = FindObjectOfType<EnemySpawner>();
-        scoreManager = FindObjectOfType<ScoreManager>();
+        scoreKeeper = FindObjectOfType<ScoreKeeper>();
 
         StartCoroutine(WaitForTongueAssignment());
     }
@@ -32,59 +36,58 @@ public class FlyEnemy : MonoBehaviour
         tongue = TongueManager.Instance.GetTongue();
     }
 
-    void Update()
+void Update()
+{
+    if (gotHit && tongueController.GetHasExtended() && !posDiffAssigned)
     {
-        if(gotHit && tongueController.GetHasExtended() && !posDiffAssigned){
-            //Debug.Log(tongue.transform.position);
-            positionDifference = transform.position - tongue.transform.position;
-            posDiffAssigned = true;
-        }
-        
-        if(!gotHit){
+        positionDifference = transform.position - tongue.transform.position;
+        Debug.Log("First position diff: " + positionDifference);
+        posDiffAssigned = true;
+    }
+
+    if (GameManager.Instance.GetGameActive())
+    {
+        if (!gotHit)
+        {
             transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
 
-            if (transform.position.x < -10f) //if out of screen
+            if (transform.position.x < triggerPosX) //out of screen
             {
-                ResetFlyPosition();
-            } 
+                enemySpawner.RepositionFly(gameObject); //change position to start
+            }
         }
-        
-        else{
-
-            if (tongueController.GetHasExtended() && posDiffAssigned){
+        else
+        {
+            if (posDiffAssigned)
+            {
+                if (!posReported)
+                {
+                    Debug.Log(positionDifference);
+                    posReported = true;
+                    Debug.Log("Position was reported");
+                }
                 transform.position = tongue.transform.position + positionDifference;
             }
 
-            if(tongueController.GetCanMove()){
-                FlyRemoval();              
+            if (tongueController.GetCanMove())
+            {
+                FlyReset();
             }
         }
     }
+}
 
     private void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log("FLY TRIGGED");        
-        if (!gotHit){
-            if(tongueController.GetHasExtended()){
-                positionDifference = transform.position - tongue.transform.position;
-                posDiffAssigned = true;
-            }        
+        //Debug.Log("FLY TRIGGED");        
+        if (!gotHit && other.tag == "Tongue"){
             gotHit = true;
-            scoreManager.AddScore();
-        }
+            }
     }
 
-    private void FlyRemoval(){
-        enemySpawner.SpawnFly();
-        Destroy(gameObject);
+    private void FlyReset(){
+        enemySpawner.RepositionFly(gameObject);
+        scoreKeeper.AddScore();
+        gotHit = false;        
     }
-    
-
-    private void ResetFlyPosition()
-    {
-        //set fly's position to the starting position
-        float randomY = Random.Range(0f, 2f);
-        transform.position = new Vector3(10f, randomY, 0f);
-    }
-
 }
 

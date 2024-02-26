@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreKeeper : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI scoreDisplay;
     
-    int currentScore = 0;
+    private int currentScore = 0;
 
     private void Update() {
         scoreDisplay.text = currentScore.ToString();
     }
-
 
     public void AddScore(){
         currentScore++;
@@ -21,5 +20,5 @@ public class ScoreManager : MonoBehaviour
     public int GetScore(){
         return currentScore;
     }
-
 }
+
