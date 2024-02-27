@@ -6,6 +6,7 @@ public class BeeEnemy : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 3f;
     [SerializeField] float triggerPosX = 6f;
+    [SerializeField] AudioClip hitSound;
     SpriteRenderer spriteRenderer;
     EnemySpawner enemySpawner;
 
@@ -31,10 +32,11 @@ public class BeeEnemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) {
         //Debug.Log("BEE TRIGGED");        
-        if (!gotHit && other.tag == "Tongue"){    
+        if (!gotHit && other.tag == "Tongue"){
+            AudioSource.PlayClipAtPoint(hitSound, Camera.main.transform.position);    
             gotHit = true;
             GameManager.Instance.SetGameActive(false);            
-            StartCoroutine(HitEffect());
+            StartCoroutine(HitVisualEffect());
             StartCoroutine(GameOverWithDelay());
         }
     }
@@ -44,7 +46,7 @@ public class BeeEnemy : MonoBehaviour
         GameManager.Instance.GameOver();
     }
 
-    IEnumerator HitEffect(){                
+    IEnumerator HitVisualEffect(){                
         while (true){
             spriteRenderer.color = new Color32 (200, 60, 30, 255);
             yield return new WaitForSeconds(0.2f);

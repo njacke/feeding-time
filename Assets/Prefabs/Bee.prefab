@@ -101,6 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   triggerPosX: 6
+  hitSound: {fileID: 8300000, guid: b631cff5d6234794799fa43b89f6b98f, type: 3}
 --- !u!58 &665572397524623247
 CircleCollider2D:
   m_ObjectHideFlags: 0

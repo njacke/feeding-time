@@ -113,4 +113,8 @@ public class TongueController : MonoBehaviour
     public Vector3 GetTonguePosition(){
         return transform.position;
     }
+
+    public float GetTongueSpeed(){
+        return tongueSpeed;
+    }
 }

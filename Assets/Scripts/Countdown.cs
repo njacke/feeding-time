@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Countdown : MonoBehaviour
 {
-    [SerializeField] float timeRemaining = 30;
+    [SerializeField] float timeRemaining = 60;
 
     [SerializeField] TextMeshProUGUI countdownText;
     bool countdownFinished = false;

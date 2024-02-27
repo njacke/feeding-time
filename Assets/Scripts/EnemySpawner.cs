@@ -8,13 +8,13 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] GameObject flyPrefab;
     [SerializeField] GameObject beePrefab;
     [SerializeField] int maxFlies = 8;
-    [SerializeField] int maxBees = 4;
+    [SerializeField] int maxBees = 5;
     [SerializeField] float minFlyDelay = 0f;
-    [SerializeField] float maxFlyDelay = 1f;
+    [SerializeField] float maxFlyDelay = 2f;
     [SerializeField] float minBeeDelay = 0f;
-    [SerializeField] float maxBeeDelay = 2f;
+    [SerializeField] float maxBeeDelay = 4f;
     [SerializeField] float minX = 6f;
-    [SerializeField] float maxX = 10f;
+    [SerializeField] float maxX = 12f;
     [SerializeField] float minY = 0f;
     [SerializeField] float maxY = 2f;
 

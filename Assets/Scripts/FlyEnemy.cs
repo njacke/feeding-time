@@ -8,6 +8,8 @@ public class FlyEnemy : MonoBehaviour
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float triggerPosX = -6f;
 
+    [SerializeField] AudioClip hitSound;
+
     GameObject tongue;
 
     TongueController tongueController;
@@ -20,11 +22,14 @@ public class FlyEnemy : MonoBehaviour
     bool gotHit = false;
     bool posDiffAssigned = false;
 
-    bool posReported = false;
+    //bool posReported = false;
+
+    float tongueSpeed;
 
     void Start()
     {
         tongueController = FindObjectOfType<TongueController>();
+        tongueSpeed = tongueController.GetTongueSpeed();
         enemySpawner = FindObjectOfType<EnemySpawner>();
         scoreKeeper = FindObjectOfType<ScoreKeeper>();
 
@@ -60,13 +65,16 @@ void Update()
         {
             if (posDiffAssigned)
             {
-                if (!posReported)
+/*                 if (!posReported)
                 {
                     Debug.Log(positionDifference);
                     posReported = true;
                     Debug.Log("Position was reported");
-                }
-                transform.position = tongue.transform.position + positionDifference;
+                } */
+                
+                var targetPosition = tongue.transform.position + positionDifference;
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, tongueSpeed * Time.deltaTime);
+                //transform.position = tongue.transform.position + positionDifference;
             }
 
             if (tongueController.GetCanMove())
@@ -79,15 +87,20 @@ void Update()
 
     private void OnTriggerEnter2D(Collider2D other) {
         //Debug.Log("FLY TRIGGED");        
-        if (!gotHit && other.tag == "Tongue"){
-            gotHit = true;
+        if (!gotHit && other.tag == "Tongue"){                        
+            gotHit = true;            
+            if (GameManager.Instance.GetGameActive()){
+                AudioSource.PlayClipAtPoint(hitSound, Camera.main.transform.position);    
             }
+        }
     }
 
     private void FlyReset(){
         enemySpawner.RepositionFly(gameObject);
         scoreKeeper.AddScore();
-        gotHit = false;        
+        gotHit = false;
+        posDiffAssigned = false;
+        //posReported = false;        
     }
 }
 
